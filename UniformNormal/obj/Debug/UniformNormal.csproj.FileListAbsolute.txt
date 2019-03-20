@@ -1,0 +1,10 @@
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\bin\Debug\UniformNormal.exe.config
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\bin\Debug\UniformNormal.exe
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\bin\Debug\UniformNormal.pdb
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\obj\Debug\UniformNormal.csprojAssemblyReference.cache
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\obj\Debug\UniformNormal.Form1.resources
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\obj\Debug\UniformNormal.Properties.Resources.resources
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\obj\Debug\UniformNormal.csproj.GenerateResource.cache
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\obj\Debug\UniformNormal.csproj.CoreCompileInputs.cache
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\obj\Debug\UniformNormal.exe
+D:\OneDrive\Dev\VisualStudio\UniformNormal\UniformNormal\obj\Debug\UniformNormal.pdb
