@@ -10,73 +10,97 @@ namespace UniformNormal
     {
         public double[,] DensityXYArray;
         public double[,] FuncXYArray;
-        public int count_p, count_r;
-        public double interval_r_begin;
-        public double interval_r_end;
-        public double interval_p_begin;
-        public double interval_p_end;
+        public int count;
+        public double interval_begin;
+        public double interval_end;
         public double interval_step;
-
         public void initialize()
         {
-            interval_r_begin = 0;
-            interval_r_end = 0;
-            interval_p_begin = 0;
-            interval_p_end = 0;
+            interval_begin = 0;
+            interval_end = 0;
             interval_step = 0;
-            count_p = 0;
-            count_r = 0;
-        }
-        public double F_r(double x,double txt1,double txt2)//распред равномерн
+            count = 0;
+        }      
+        public double DistNormal(double x,double txt1,double txt2)
         {
-            return (Math.Exp(-(x - txt1) * (x - txt1) / (2 * txt2 * txt2)));
+            return (Func(x,txt1,txt2))/(txt2*Math.Sqrt(2*Math.PI));
         }
-        public double f_r(double x,double txt1,double txt2)//плотность равномерн.
+        public double Func(double x,double txt1,double txt2)
         {
-            return extr(txt2) * (Math.Exp(-((x - txt1) * (x - txt1)) / (2 * txt2 * txt2)));
+            double res = Math.Pow((x - txt1) ,2) / (2 * Math.Pow((txt2),2));
+            return Math.Exp(-Math.Pow(res,2));
         }
-        public double F_n_h(double x,double txt1,double txt2)
+        public double FuncNormal(double x,double txt1,double txt2)
         {
-            return (Math.Exp(-(x - txt1) * (x - txt1) / (2 * txt2 * txt2)));
-        }
-        public double F_n(double x,double txt1,double txt2)//распред норм m=txt1,q=txt2//без 
-        {
-            return (2 / (Math.Sqrt(2 * Math.PI))) * simpson(0, x,txt1,txt2);
-        }
-        public double P_x(double x,double txt1,double txt2)
-        {
-            return 1 / 2 + (1 / 2) * F_r(x,txt1,txt2);
-        }
-        public double simpson(double x1, double x2,double txt1,double txt2)
+            return 0.5 + Integral(0, x, txt1, txt2) / (txt2*1.45*Math.Sqrt(Math.PI));
+        }     
+        public double Integral(double x1, double x,double txt1,double txt2)
         {
             double eps = 0.00001;
-            double I = eps + 1, I1 = 0;//I-предыдущее вычисленное значение интеграла, I1-новое, с большим N.
+            double I = eps + 1, I1 = 0;
             for (int N = 2; (N <= 4) || (Math.Abs(I1 - I) > eps); N *= 2)
             {
                 double h, sum2 = 0, sum4 = 0, sum = 0;
-                h = (x2 - x1) / (2 * N);//Шаг интегрирования.
+                h = (x - x1) / (2 * N);
                 for (int i = 1; i <= 2 * N - 1; i += 2)
                 {
-                    sum4 += F_n_h(x1 + h * i,txt1,txt2);//Значения с нечётными индексами, которые нужно умножить на 4.
-                    sum2 += F_n_h(x1 + h * (i + 1),txt1,txt2);//Значения с чётными индексами, которые нужно умножить на 2.
+                    sum4 += Func(x1 + h * i,txt1,txt2);
+                    sum2 += Func(x1 + h * (i + 1),txt1,txt2);
                 }
-                sum = F_n_h(x1,txt1,txt2) + 4 * sum4 + 2 * sum2 - F_n_h(x2, txt1, txt2) ;//Отнимаем значение f(b) так как ранее прибавили его дважды. 
+                sum = Func(x1, txt1, txt2) + 4 * sum4 + 2 * sum2 - Func(x, txt1, txt2) ;
                 I = I1;
                 I1 = (h / 3) * sum;
             }
             return I1;
         }
-        public double extr(double txt2)
-        {
-            return 1 / (txt2 * Math.Sqrt(2 * Math.PI));
-        }
-
         public void Calculate(double txt1,double txt2)
         {
             
+            double tmp_x = txt1;
+            interval_step = 0.1;
+            while (DistNormal(tmp_x,txt1,txt2) >= 0.0001)
+            {
+                tmp_x -= interval_step;
+            }
+            double interval_begin=tmp_x;
+            tmp_x += interval_step;
+            count++;
+            while (DistNormal(tmp_x, txt1, txt2) >= 0.0001)
+            {
+                count++;
+                tmp_x += interval_step;
+            }
+            interval_end = tmp_x;
+            tmp_x = 0;
+            DensityXYArray = new double[2, count + 1];
+            for (int i = 0; i < count + 1; i++)
+            {
+                if (i == 0)
+                {
+                    DensityXYArray[0, 0] = interval_begin;
+                    DensityXYArray[1, 0] = DistNormal(DensityXYArray[0, 0],txt1,txt2);
+                }
+                else
+                {
+                    DensityXYArray[0, i] = DensityXYArray[0, i - 1] + interval_step;
+                    DensityXYArray[1, i] = DistNormal(DensityXYArray[0, i],txt1,txt2);
+                }
+            }
+            FuncXYArray = new double[2, count + 1];
+            
+            for (int i = 0; i < count + 1; i++)
+            {
+                if (i == 0)
+                {
+                    FuncXYArray[0, 0] = interval_begin;
+                    FuncXYArray[1, 0] = FuncNormal(interval_begin,txt1,txt2);
+                }
+                else
+                {
+                    FuncXYArray[0, i] = FuncXYArray[0, i - 1] + interval_step;
+                    FuncXYArray[1, i] = FuncNormal(FuncXYArray[0, i],txt1,txt2);
+                }
+            }
         }
-
-
-
     }
 }
