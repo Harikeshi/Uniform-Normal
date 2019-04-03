@@ -24,8 +24,21 @@ namespace UniformNormal
         }
         void Initform()
         {
-            txt1 = Convert.ToDouble(textBox1.Text);
-            txt2 = Convert.ToDouble(textBox2.Text);
+            try
+            {
+                txt1 = Convert.ToDouble(textBox1.Text);
+                txt2 = Convert.ToDouble(textBox2.Text);
+            }
+            catch
+            {
+                MessageBox.Show(
+                               "Введено некорректное значение",
+                               "Ошибка",
+                               MessageBoxButtons.OK,
+                               MessageBoxIcon.Warning,
+                               MessageBoxDefaultButton.Button1,
+                               MessageBoxOptions.RightAlign);
+            }
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -50,6 +63,7 @@ namespace UniformNormal
             chart1.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             chart2.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             
+
             for (int i = 0; i < uniform.count; i++)
             {
                 chart1.Series[0].Points.AddXY(Math.Round(uniform.DensityXYArray[0, i], 1), uniform.DensityXYArray[1, i]);
@@ -67,8 +81,12 @@ namespace UniformNormal
            
             chart1.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
             chart2.Series[0].ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            
-            
+            chart1.ChartAreas[0].AxisY.Maximum = 1;
+            chart2.ChartAreas[0].AxisX.Maximum = 13;
+            chart2.ChartAreas[0].AxisX.Minimum = -15;
+            //chart2.ChartAreas[0].AxisX.Maximum = normal.interval_end;
+            //chart2.ChartAreas[0].AxisX.Minimum = Math.Round(normal.FuncXYArray[0, 0],1);
+
             for (int i = 0; i < normal.count; i++)
             {
                 chart1.Series[0].Points.AddXY(Math.Round(normal.DensityXYArray[0, i],1), normal.DensityXYArray[1, i]);
@@ -84,15 +102,21 @@ namespace UniformNormal
         private void button1_Click(object sender, EventArgs e)
         {
             Initform();
-            if (norm == true)
-            {               
-                normal.Calculate(txt1, txt2);
-                ShowChartNormal();
-            }
-            else
+            double txt=txt2;
+            if (txt2 < 0.4) {  txt2 = 0.4; }
+            if (txt2 != 0 && txt2 >0)
             {
-                uniform.Calculate(txt1, txt2);
-                ShowChartUniform();
+                if (norm == true)
+                {
+                    normal.Calculate(txt1, txt2);
+                    ShowChartNormal();
+                }
+                else
+                {
+                    uniform.Calculate(txt1, txt);
+                    ShowChartUniform();
+                    txt = 0;
+                }
             }
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -104,7 +128,7 @@ namespace UniformNormal
                         "Normal"});
             uniform = new Uniform();
             normal = new Normal();
-            normal.initialize();
+            //normal.initialize();
             uniform.initialize();
             Initform();
         }
